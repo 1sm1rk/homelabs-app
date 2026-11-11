@@ -8,3 +8,5 @@ AGENTS.md
 .classpath
 .settings/
 .project
+# Python bytecode of the screenshot harness
+__pycache__/

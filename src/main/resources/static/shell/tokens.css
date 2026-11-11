@@ -1,0 +1,172 @@
+/* ==========================================================================
+   homelabs-app — design tokens.
+   THE contract between the shell and every micro frontend: custom properties
+   inherit into shadow roots, so an MFE styles itself only through these names.
+   Calm + dense: neutral gray scale, ONE accent, status colours only for status.
+   Light by default, dark via prefers-color-scheme, manual override via
+   <html data-theme="light|dark">.
+   ========================================================================== */
+
+:root {
+    color-scheme: light;
+
+    /* Type — one system stack, no webfont download. Body size 14 px (dense). */
+    --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-mono: ui-monospace, "JetBrains Mono", "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    --text-xs: 0.75rem;    /* 12 */
+    --text-sm: 0.8125rem;  /* 13 */
+    --text-md: 0.875rem;   /* 14 — body */
+    --text-lg: 1rem;       /* 16 */
+    --text-xl: 1.25rem;    /* 20 */
+    --text-2xl: 1.75rem;   /* 28 */
+    --weight-regular: 400;
+    --weight-medium: 500;
+    --weight-semibold: 600;
+    --line-tight: 1.25;
+    --line-base: 1.5;
+
+    /* Rhythm — 4 px steps. */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-8: 32px;
+    --space-10: 40px;
+
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 8px;
+    --radius-full: 999px;
+
+    /* Sizes — every control and every row shares these heights. */
+    --control-height: 32px;
+    --control-height-sm: 26px;
+    --row-height: 32px;
+    --topbar-height: 48px;
+    --rail-width: 224px;
+    --rail-width-collapsed: 56px;
+    --icon-size: 16px;
+    --drawer-width: 440px;
+    --content-max: 1200px;
+
+    --motion-fast: 120ms;
+    --motion-base: 180ms;
+    --ease: cubic-bezier(0.2, 0, 0, 1);
+
+    /* Neutral scale — 9 steps, slightly cool. */
+    --gray-50: #f8f9fa;
+    --gray-100: #f1f3f5;
+    --gray-200: #e6e8eb;
+    --gray-300: #d7dade;
+    --gray-400: #b5bac1;
+    --gray-500: #8a9099;
+    --gray-600: #646b75;
+    --gray-700: #444a53;
+    --gray-800: #2a2f36;
+    --gray-900: #16191d;
+
+    /* The one accent — a quiet indigo-blue. */
+    --accent-500: #4f5bd5;
+    --accent-600: #4350c4;
+
+    /* Semantic layer — the names components use. */
+    --color-bg: #ffffff;
+    --color-bg-subtle: var(--gray-50);
+    --color-surface: #ffffff;
+    --color-surface-raised: #ffffff;
+    --color-hover: var(--gray-100);
+    --color-selected: #eef0fc;
+    --color-border: var(--gray-200);
+    --color-border-strong: var(--gray-300);
+    --color-text: var(--gray-900);
+    --color-text-muted: var(--gray-600);
+    --color-text-subtle: var(--gray-500);
+    --color-accent: var(--accent-500);
+    --color-accent-hover: var(--accent-600);
+    --color-accent-text: #ffffff;
+    --color-accent-soft: rgba(79, 91, 213, 0.12);
+    --color-focus: rgba(79, 91, 213, 0.45);
+    --color-overlay: rgba(22, 25, 29, 0.32);
+
+    /* Status — only for status (dot + pill), never for decoration. */
+    --status-neutral: var(--gray-500);
+    --status-info: #0e9fb5;
+    --status-progress: #3b82f6;
+    --status-success: #2f9e66;
+    --status-warning: #d97706;
+    --status-danger: #d6453d;
+    --status-neutral-soft: var(--gray-100);
+    --status-info-soft: #e2f5f8;
+    --status-progress-soft: #e8f1fe;
+    --status-success-soft: #e5f5ec;
+    --status-warning-soft: #fdf0e2;
+    --status-danger-soft: #fceceb;
+
+    --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.06);
+    --shadow-md: 0 4px 12px rgba(16, 24, 40, 0.08), 0 1px 3px rgba(16, 24, 40, 0.06);
+    --shadow-lg: 0 16px 40px rgba(16, 24, 40, 0.16), 0 2px 6px rgba(16, 24, 40, 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --color-bg: #111317;
+        --color-bg-subtle: #0c0e11;
+        --color-surface: #16191d;
+        --color-surface-raised: #1c2025;
+        --color-hover: #22262c;
+        --color-selected: #252a45;
+        --color-border: #2a2f36;
+        --color-border-strong: #383e46;
+        --color-text: #e8eaed;
+        --color-text-muted: #a2a8b1;
+        --color-text-subtle: #7d848e;
+        --color-accent: #7d87f0;
+        --color-accent-hover: #929bf4;
+        --color-accent-text: #0e1020;
+        --color-accent-soft: rgba(125, 135, 240, 0.16);
+        --color-focus: rgba(125, 135, 240, 0.5);
+        --color-overlay: rgba(0, 0, 0, 0.5);
+        --status-neutral-soft: #23272d;
+        --status-info-soft: #0f2f35;
+        --status-progress-soft: #172a45;
+        --status-success-soft: #14301f;
+        --status-warning-soft: #3a2614;
+        --status-danger-soft: #3a1b19;
+        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+        --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45);
+        --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.55);
+    }
+}
+
+:root[data-theme="dark"] {
+    color-scheme: dark;
+    --color-bg: #111317;
+    --color-bg-subtle: #0c0e11;
+    --color-surface: #16191d;
+    --color-surface-raised: #1c2025;
+    --color-hover: #22262c;
+    --color-selected: #252a45;
+    --color-border: #2a2f36;
+    --color-border-strong: #383e46;
+    --color-text: #e8eaed;
+    --color-text-muted: #a2a8b1;
+    --color-text-subtle: #7d848e;
+    --color-accent: #7d87f0;
+    --color-accent-hover: #929bf4;
+    --color-accent-text: #0e1020;
+    --color-accent-soft: rgba(125, 135, 240, 0.16);
+    --color-focus: rgba(125, 135, 240, 0.5);
+    --color-overlay: rgba(0, 0, 0, 0.5);
+    --status-neutral-soft: #23272d;
+    --status-info-soft: #0f2f35;
+    --status-progress-soft: #172a45;
+    --status-success-soft: #14301f;
+    --status-warning-soft: #3a2614;
+    --status-danger-soft: #3a1b19;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45);
+    --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.55);
+}

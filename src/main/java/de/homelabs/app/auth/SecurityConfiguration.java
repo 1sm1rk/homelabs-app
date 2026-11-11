@@ -47,6 +47,8 @@ public class SecurityConfiguration {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, "/health").permitAll()
+                        // Shell scripts, styles, icons and chrome texts: static, no data.
+                        .requestMatchers(HttpMethod.GET, "/shell/**").permitAll()
                         .anyRequest().authenticated())
                 .oauth2Login(Customizer.withDefaults())
                 .exceptionHandling(exceptions -> exceptions.authenticationEntryPoint(entryPoint()))

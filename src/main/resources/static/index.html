@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>homelabs</title>
+    <link rel="icon" href="/shell/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/shell/tokens.css">
+    <link rel="stylesheet" href="/shell/shell.css">
+    <script type="module" src="/shell/app.js"></script>
+</head>
+<body>
+<div class="app" id="app">
+    <aside class="rail" id="rail">
+        <a class="rail__brand" href="/" data-nav>
+            <svg class="icon rail__logo" aria-hidden="true"><use href="/shell/icons.svg#logo"></use></svg>
+            <span class="rail__label">homelabs</span>
+        </a>
+        <nav class="rail__nav" data-i18n-aria="rail.label" aria-label="Anwendungen">
+            <ul class="rail__list" id="rail-list"></ul>
+        </nav>
+        <div class="rail__footer">
+            <a class="rail__link" href="/design" data-nav data-route="design">
+                <svg class="icon" aria-hidden="true"><use href="/shell/icons.svg#palette"></use></svg>
+                <span class="rail__label" data-i18n="rail.design">Design</span>
+            </a>
+            <button class="rail__link rail__toggle" type="button" id="rail-toggle" aria-expanded="true">
+                <svg class="icon" aria-hidden="true"><use href="/shell/icons.svg#sidebar"></use></svg>
+                <span class="rail__label" data-i18n="rail.collapse">Einklappen</span>
+            </button>
+        </div>
+    </aside>
+
+    <header class="topbar">
+        <nav class="trail" data-i18n-aria="trail.label" aria-label="Pfad">
+            <ol class="trail__list" id="trail"></ol>
+        </nav>
+        <div class="topbar__tools">
+            <div class="segmented" role="group" data-i18n-aria="locale.label" aria-label="Sprache" id="locale-switch">
+                <button type="button" class="segmented__item" data-locale="de" lang="de">DE</button>
+                <button type="button" class="segmented__item" data-locale="en" lang="en">EN</button>
+            </div>
+            <div class="person">
+                <button type="button" class="person__button" id="person-button" aria-haspopup="menu" aria-expanded="false">
+                    <span class="person__avatar" id="person-avatar" aria-hidden="true"></span>
+                    <span class="person__name" id="person-name"></span>
+                    <svg class="icon icon--sm" aria-hidden="true"><use href="/shell/icons.svg#chevron-down"></use></svg>
+                </button>
+                <div class="menu" id="person-menu" role="menu" hidden>
+                    <div class="menu__section" role="group" data-i18n-aria="theme.label" aria-label="Darstellung">
+                        <span class="menu__heading" data-i18n="theme.label">Darstellung</span>
+                        <button type="button" class="menu__item" role="menuitemradio" data-theme-choice="system">
+                            <svg class="icon" aria-hidden="true"><use href="/shell/icons.svg#monitor"></use></svg>
+                            <span data-i18n="theme.system">System</span>
+                        </button>
+                        <button type="button" class="menu__item" role="menuitemradio" data-theme-choice="light">
+                            <svg class="icon" aria-hidden="true"><use href="/shell/icons.svg#sun"></use></svg>
+                            <span data-i18n="theme.light">Hell</span>
+                        </button>
+                        <button type="button" class="menu__item" role="menuitemradio" data-theme-choice="dark">
+                            <svg class="icon" aria-hidden="true"><use href="/shell/icons.svg#moon"></use></svg>
+                            <span data-i18n="theme.dark">Dunkel</span>
+                        </button>
+                    </div>
+                    <div class="menu__separator" role="separator"></div>
+                    <button type="button" class="menu__item" role="menuitem" id="sign-out">
+                        <svg class="icon" aria-hidden="true"><use href="/shell/icons.svg#log-out"></use></svg>
+                        <span data-i18n="person.signOut">Abmelden</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="outlet" id="outlet" tabindex="-1"></main>
+</div>
+</body>
+</html>

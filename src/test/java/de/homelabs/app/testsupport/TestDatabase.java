@@ -24,12 +24,14 @@ public abstract class TestDatabase {
         properties().forEach((key, value) -> registry.add(key, () -> value));
     }
 
-    /** Datasource and secret properties for a context started outside the test framework. */
+    /** Datasource, secret and registration properties for a context started outside the test framework. */
     public static Map<String, String> properties() {
         return Map.of(
                 "spring.datasource.url", POSTGRES.getJdbcUrl(),
                 "spring.datasource.username", POSTGRES.getUsername(),
                 "spring.datasource.password", POSTGRES.getPassword(),
-                "spring.security.oauth2.client.registration.keycloak.client-secret", "test-only-secret");
+                "spring.security.oauth2.client.registration.keycloak.client-secret", "test-only-secret",
+                // Hermetic: never the dev service on :8093 (port 9 = discard, refused locally).
+                "app.mfes.projects.base-url", "http://127.0.0.1:9");
     }
 }

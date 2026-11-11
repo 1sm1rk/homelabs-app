@@ -12,7 +12,12 @@ import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMap
 import org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizedClientRepository;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProviderBuilder;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizedClientManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy;
 import org.springframework.security.web.authentication.DelegatingAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
@@ -20,6 +25,9 @@ import org.springframework.security.web.authentication.logout.HttpStatusReturnin
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+
+import de.homelabs.app.mfe.MfeGate;
+import de.homelabs.app.mfe.MfeRegistry;
 
 /**
  * The login gate of the backend for frontend.
@@ -42,13 +50,25 @@ public class SecurityConfiguration {
     /** Registration id of the realm client in {@code application.yml}. */
     public static final String REGISTRATION_ID = "keycloak";
 
+    /**
+     * Same origin for everything; no inline scripts or styles anywhere (constructed
+     * stylesheets are not affected). The login form posts to the realm.
+     */
+    static final String CONTENT_SECURITY_POLICY = "default-src 'self'; script-src 'self'; style-src 'self'; "
+            + "img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; "
+            + "form-action 'self' https://auth.homelabs.de";
+
     @Bean
-    SecurityFilterChain appSecurityFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain appSecurityFilterChain(HttpSecurity http, MfeRegistry registry) throws Exception {
+        PathPatternRequestMatcher.Builder paths = PathPatternRequestMatcher.withDefaults();
+        MfeGate gate = new MfeGate(registry);
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, "/health").permitAll()
                         // Shell scripts, styles, icons and chrome texts: static, no data.
                         .requestMatchers(HttpMethod.GET, "/shell/**").permitAll()
+                        // Stage one: the person holds the MFE's role (unknown id → denied).
+                        .requestMatchers(paths.matcher("/mfe/{id}/**"), paths.matcher("/api/{id}/**")).access(gate)
                         .anyRequest().authenticated())
                 .oauth2Login(Customizer.withDefaults())
                 .exceptionHandling(exceptions -> exceptions.authenticationEntryPoint(entryPoint()))
@@ -59,8 +79,27 @@ public class SecurityConfiguration {
                         .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.NO_CONTENT))
                         .invalidateHttpSession(true)
                         .clearAuthentication(true)
-                        .deleteCookies("APPSESSION"));
+                        .deleteCookies("APPSESSION"))
+                .headers(headers -> headers
+                        .contentSecurityPolicy(csp -> csp.policyDirectives(CONTENT_SECURITY_POLICY))
+                        .referrerPolicy(referrer -> referrer.policy(ReferrerPolicy.SAME_ORIGIN)));
         return http.build();
+    }
+
+    /**
+     * Hands the proxy a valid access token: the stored one, or a refreshed one when it is
+     * about to expire. A failed refresh is the end of the sign-in.
+     */
+    @Bean
+    OAuth2AuthorizedClientManager authorizedClientManager(ClientRegistrationRepository registrations,
+            OAuth2AuthorizedClientRepository authorizedClients) {
+        DefaultOAuth2AuthorizedClientManager manager =
+                new DefaultOAuth2AuthorizedClientManager(registrations, authorizedClients);
+        manager.setAuthorizedClientProvider(OAuth2AuthorizedClientProviderBuilder.builder()
+                .authorizationCode()
+                .refreshToken()
+                .build());
+        return manager;
     }
 
     @Bean

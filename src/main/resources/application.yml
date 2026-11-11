@@ -37,6 +37,13 @@ spring:
           keycloak:
             issuer-uri: ${APP_ISSUER_URI:https://auth.homelabs.de/realms/homelabs}
 
+# The micro frontends: one backend service each. The service describes its MFE at
+# <base-url>/mfe/descriptor; the app decides who may open it (role mfe-<id>).
+app:
+  mfes:
+    projects:
+      base-url: ${APP_MFE_PROJECTS_URL:http://localhost:8093}
+
 server:
   port: 8095
   # Trust X-Forwarded-* from the TLS edge so OAuth callback URLs compose as

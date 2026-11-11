@@ -35,11 +35,19 @@ ITEMS = [
     {"ref": "HA-4", "title": "Pipeline + Deploy", "status": "blocked", "owner": None, "due": None},
 ]
 HOLD_TAG = b'<img src="/__hold" alt="" hidden>'
+# The app's policy (SecurityConfiguration.CONTENT_SECURITY_POLICY) — the screenshots
+# prove the shell, the guide and the demo MFE run under it.
+CSP = ("default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; "
+       "connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://auth.homelabs.de")
 
 
 class Handler(SimpleHTTPRequestHandler):
     def log_message(self, *args):
         pass
+
+    def end_headers(self):
+        self.send_header("Content-Security-Policy", CSP)
+        super().end_headers()
 
     def send_json(self, value):
         body = json.dumps(value).encode()

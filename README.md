@@ -17,13 +17,22 @@ No frontend build chain, no JavaScript or CSS framework.
 
 ## How to run / verify
 
-Activates with the first implementation step (the repository currently holds
-the scaffold):
+- Dev database: `docker compose -f compose.dev.yml up -d` (Postgres 17 on
+  localhost:5432, database `app`; Flyway creates the session tables).
+- Run: `mvn spring-boot:run` (dev port 8095). Needs `APP_CLIENT_SECRET` (the
+  realm client's secret); micro frontends are registered as
+  `app.mfes.<id>.base-url` (`APP_MFE_PROJECTS_URL`, default
+  `http://localhost:8093`).
+- Verify (tests): `mvn clean verify` — the integration tests start a Postgres
+  test container, so Docker must be available.
+- `GET /health` is the open liveness probe.
 
-- Run: `mvn spring-boot:run` (dev port 8095)
-- Verify (tests): `mvn clean verify`
+## CI/CD
 
-`GET /health` is the open liveness probe once the application boots.
+GitHub Actions (`.github/workflows/ci.yml`): pull requests run `verify`; a
+merge to `main` runs `verify` and publishes the container image
+`ghcr.io/1sm1rk/homelabs-app` (`latest` and `sha-<commit>`). The image is a
+multi-stage build (`Dockerfile`, non-root, port 8095).
 
 ## Commit messages
 

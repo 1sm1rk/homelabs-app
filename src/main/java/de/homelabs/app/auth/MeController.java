@@ -2,6 +2,7 @@ package de.homelabs.app.auth;
 
 import java.util.List;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,9 +14,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @RestController
 class MeController {
 
+    /**
+     * The micro frontends come from the AUTHENTICATION's authorities: the login maps the
+     * role claim onto the authentication token, while the OIDC user inside it keeps the
+     * unmapped authorities of the raw login.
+     */
     @GetMapping("/bff/me")
-    Me me(@AuthenticationPrincipal OidcUser user) {
-        return new Me(user.getSubject(), displayName(user), MfeRoles.mfeIds(user.getAuthorities()));
+    Me me(Authentication authentication, @AuthenticationPrincipal OidcUser user) {
+        return new Me(user.getSubject(), displayName(user), MfeRoles.mfeIds(authentication.getAuthorities()));
     }
 
     private static String displayName(OidcUser user) {

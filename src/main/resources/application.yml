@@ -1,0 +1,58 @@
+spring:
+  application:
+    name: homelabs-app
+  threads:
+    virtual:
+      enabled: true
+  datasource:
+    # The session store. Dev: the shared local Postgres (database 'app'); prod: the
+    # shared Postgres on the core network.
+    url: ${APP_DB_URL:jdbc:postgresql://localhost:5432/app}
+    username: ${APP_DB_USER:app}
+    password: ${APP_DB_PASSWORD:app}
+  flyway:
+    locations: classpath:db/migration
+  session:
+    jdbc:
+      # The schema is the versioned migration V001 (Spring Session's PostgreSQL script);
+      # Spring Session never creates or drops tables itself. Expired sessions are deleted
+      # by Spring Session's own cleanup job (spring.session.jdbc.cleanup-cron, default
+      # every minute).
+      initialize-schema: never
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            provider: keycloak
+            # Confidential client of the shared realm. The secret has NO default: the
+            # application refuses to start without APP_CLIENT_SECRET.
+            client-id: ${APP_CLIENT_ID:app}
+            client-secret: ${APP_CLIENT_SECRET}
+            authorization-grant-type: authorization_code
+            # PKCE rides along: the realm advertises its challenge methods.
+            scope: openid,profile,email
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+        provider:
+          keycloak:
+            issuer-uri: ${APP_ISSUER_URI:https://auth.homelabs.de/realms/homelabs}
+
+server:
+  port: 8095
+  # Trust X-Forwarded-* from the TLS edge so OAuth callback URLs compose as
+  # https://app.homelabs.de; a direct dev run is unaffected.
+  forward-headers-strategy: framework
+  servlet:
+    session:
+      # Idle timeout; the realm's SSO session limits the login lifetime on top of it.
+      timeout: 8h
+      cookie:
+        name: APPSESSION
+        http-only: true
+        same-site: lax
+        # Browsers keep Secure cookies on http://localhost too, so the dev run works.
+        secure: true
+
+logging:
+  level:
+    de.homelabs.app: DEBUG

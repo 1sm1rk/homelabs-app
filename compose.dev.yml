@@ -1,0 +1,18 @@
+# Local session store for `mvn spring-boot:run` (dev port 8095).
+# Uses host port 5432 like the other services' dev databases — if a shared local
+# Postgres already runs there, create the database 'app' in it instead.
+#   docker compose -f compose.dev.yml up -d
+services:
+  postgres:
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_DB: app
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - app-dev-db:/var/lib/postgresql/data
+
+volumes:
+  app-dev-db:

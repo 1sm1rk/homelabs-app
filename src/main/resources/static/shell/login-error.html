@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>homelabs — Anmeldung</title>
+    <link rel="icon" href="/shell/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/shell/tokens.css">
+    <link rel="stylesheet" href="/shell/shell.css">
+</head>
+<body>
+<!-- Where a failed sign-in lands (e.g. two sign-ins racing in parallel tabs):
+     no session needed, no script — one way back into a fresh sign-in. -->
+<main class="state state--error">
+    <div class="state__box">
+        <div class="state__icon"><svg class="icon" aria-hidden="true"><use href="/shell/icons.svg#alert"></use></svg></div>
+        <h1 class="state__title">Die Anmeldung hat nicht geklappt</h1>
+        <p class="state__text">Meist hilft ein neuer Versuch – am besten in nur einem Tab.</p>
+        <p class="state__text" lang="en">Signing in did not work. Trying again usually helps — best in a single tab.</p>
+        <a class="state__action" href="/">Erneut anmelden · Sign in again</a>
+    </div>
+</main>
+</body>
+</html>

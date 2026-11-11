@@ -117,7 +117,7 @@ class Handler(SimpleHTTPRequestHandler):
             if STATIC not in file.parents or not file.is_file():
                 self.send_error(404)
                 return
-            types = {".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml", ".json": "application/json"}
+            types = {".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml", ".json": "application/json"}
             self.send_file(file, types.get(file.suffix, "application/octet-stream"))
         else:
             self.send_file(STATIC / "index.html", "text/html")

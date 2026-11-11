@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizedClientRepository;
@@ -50,6 +49,8 @@ public class SecurityConfiguration {
     /** Registration id of the realm client in {@code application.yml}. */
     public static final String REGISTRATION_ID = "keycloak";
 
+    static final String LOGIN_ERROR_PAGE = "/shell/login-error.html";
+
     /**
      * Same origin for everything; no inline scripts or styles anywhere (constructed
      * stylesheets are not affected). The login form posts to the realm.
@@ -70,7 +71,9 @@ public class SecurityConfiguration {
                         // Stage one: the person holds the MFE's role (unknown id → denied).
                         .requestMatchers(paths.matcher("/mfe/{id}/**"), paths.matcher("/api/{id}/**")).access(gate)
                         .anyRequest().authenticated())
-                .oauth2Login(Customizer.withDefaults())
+                // A failed sign-in (e.g. two racing in parallel tabs) lands on a static
+                // page with one way back, not on a non-existent /login.
+                .oauth2Login(login -> login.failureUrl(LOGIN_ERROR_PAGE))
                 .exceptionHandling(exceptions -> exceptions.authenticationEntryPoint(entryPoint()))
                 .csrf(csrf -> csrf.spa())
                 .logout(logout -> logout

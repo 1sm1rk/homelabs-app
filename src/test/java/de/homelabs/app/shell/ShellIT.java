@@ -56,6 +56,16 @@ class ShellIT extends TestDatabase {
     }
 
     @Test
+    void sendsAFailedSignInToTheLoginErrorPage() throws Exception {
+        mockMvc.perform(get("/login/oauth2/code/keycloak").param("code", "c").param("state", "unknown"))
+                .andExpect(status().isFound())
+                .andExpect(header().string("Location", "/shell/login-error.html"));
+        mockMvc.perform(get("/shell/login-error.html"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("href=\"/\"")));
+    }
+
+    @Test
     void servesTheShellAssetsWithoutASession() throws Exception {
         mockMvc.perform(get("/shell/app.js")).andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith("text/javascript"));
